@@ -19,11 +19,11 @@ public enum SDKEnvironment {
     var trustBackend: Backend {
         switch self {
         case .dev:
-            return Backend("https://www.cc-d.bit.admin.ch/trust", version: "v1")
+            return Backend("", version: "v1")
         case .abn:
-            return Backend("https://www.cc-a.bit.admin.ch/trust", version: "v1")
+            return Backend("", version: "v1")
         case .prod:
-            return Backend("https://www.cc.bit.admin.ch/trust", version: "v1")
+            return Backend("", version: "v1")
         }
     }
 
