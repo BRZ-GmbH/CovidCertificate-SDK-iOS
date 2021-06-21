@@ -133,7 +133,8 @@ public class TrustListUpdate {
     }
 
     public func addCheckOperation(forceUpdate: Bool, checkOperation: @escaping ((NetworkError?) -> Void)) {
-        let updateNeeeded = !isListStillValid() || forceUpdate
+        // TODO AT - Disabled Backend Integration
+        let updateNeeeded = false // !isListStillValid() || forceUpdate
         let updateAlreadyRunnning = updateOperation != nil
 
         if updateNeeeded, !updateAlreadyRunnning {
