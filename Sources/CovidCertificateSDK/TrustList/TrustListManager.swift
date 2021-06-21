@@ -26,6 +26,7 @@ class TrustlistManager: TrustlistManagerProtocol {
     // MARK: - JWS verification
 
     public static var jwsVerifier: JWSVerifier {
+        // TODO AT - Change backend certificate
         guard let data = Bundle.module.url(forResource: "swiss_governmentrootcaii", withExtension: "der") else {
             fatalError("Signing CA not in Bundle")
         }
@@ -37,13 +38,14 @@ class TrustlistManager: TrustlistManagerProtocol {
     }
 
     private static var leafCertificateCommonName: String {
+        // TODO AT - Removed backend leaf certificate name
         switch CovidCertificateSDK.currentEnvironment {
         case .dev:
-            return "CH01-AppContentCertificate-ref"
+            return ""
         case .abn:
-            return "CH01-AppContentCertificate-abn"
+            return ""
         case .prod:
-            return "CH01-AppContentCertificate"
+            return ""
         }
     }
 
