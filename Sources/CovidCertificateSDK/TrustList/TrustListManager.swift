@@ -12,7 +12,7 @@
 import Foundation
 
 public protocol TrustlistManagerProtocol {
-    static var jwsVerifier: JWSVerifier { get }
+    static var jwsVerifier: JWSVerifier? { get }
     var revocationListUpdater: TrustListUpdate { get }
     var trustCertificateUpdater: TrustListUpdate { get }
     var nationalRulesListUpdater: TrustListUpdate { get }
@@ -25,9 +25,10 @@ public protocol TrustlistManagerProtocol {
 class TrustlistManager: TrustlistManagerProtocol {
     // MARK: - JWS verification
 
-    public static var jwsVerifier: JWSVerifier {
+    // TODO: AT - Disable JWSVerifier temporarily since we removed pinned backend certificates
+    public static var jwsVerifier: JWSVerifier? = nil /*{
         // TODO AT - Change backend certificate
-        guard let data = Bundle.module.url(forResource: "swiss_governmentrootcaii", withExtension: "der") else {
+        guard let data = Bundle.module.url(forResource: "", withExtension: "der") else {
             fatalError("Signing CA not in Bundle")
         }
         guard let caPem = try? Data(contentsOf: data),
@@ -35,7 +36,7 @@ class TrustlistManager: TrustlistManagerProtocol {
             fatalError("Cannot create certificate from data")
         }
         return verifier
-    }
+    }*/
 
     private static var leafCertificateCommonName: String {
         // TODO AT - Removed backend leaf certificate name

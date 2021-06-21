@@ -38,7 +38,8 @@ class TrustCertificatesUpdate: TrustListUpdate {
         let semaphore = DispatchSemaphore(value: 0)
         var outcome: Result<ActiveTrustCertificates, JWSError> = .failure(.SIGNATURE_INVALID)
 
-        TrustlistManager.jwsVerifier.verifyAndDecode(httpBody: d) { (result: Result<ActiveTrustCertificates, JWSError>) in
+        // TODO: AT - Disable JWSVerifier temporarily since we removed pinned backend certificates
+        TrustlistManager.jwsVerifier?.verifyAndDecode(httpBody: d) { (result: Result<ActiveTrustCertificates, JWSError>) in
             outcome = result
             semaphore.signal()
         }
@@ -84,7 +85,8 @@ class TrustCertificatesUpdate: TrustListUpdate {
             let semaphore = DispatchSemaphore(value: 0)
             var outcome: Result<TrustCertificates, JWSError> = .failure(.SIGNATURE_INVALID)
 
-            TrustlistManager.jwsVerifier.verifyAndDecode(httpBody: d) { (result: Result<TrustCertificates, JWSError>) in
+            // TODO: AT - Disable JWSVerifier temporarily since we removed pinned backend certificates
+            TrustlistManager.jwsVerifier?.verifyAndDecode(httpBody: d) { (result: Result<TrustCertificates, JWSError>) in
                 outcome = result
                 semaphore.signal()
             }
