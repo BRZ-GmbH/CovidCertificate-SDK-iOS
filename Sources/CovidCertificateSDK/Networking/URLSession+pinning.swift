@@ -91,7 +91,7 @@ class CertificateEvaluator: NSObject, URLSessionDelegate {
 
         // all these hosts have a seperate certificate
         // TODO AT - Removed pinned backend hosts
-        let hosts = []
+        let hosts : [String] = []
         for host in hosts {
             evaluators[host] = evaluator
         }
