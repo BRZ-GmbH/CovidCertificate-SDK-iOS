@@ -113,10 +113,12 @@ public struct ChCovidCert {
     public func checkSignature(cose: DGCHolder, forceUpdate: Bool, _ completionHandler: @escaping (Result<ValidationResult, ValidationError>) -> Void) {
         switch cose.cwt.isValid() {
         case let .success(isValid):
-            if !isValid {
+            // TODO AT - Disabled check for signature validity
+            /*if !isValid {
                 completionHandler(.failure(.CWT_EXPIRED))
                 return
-            }
+            }*/
+            break
         case let .failure(error):
             completionHandler(.failure(error))
             return
