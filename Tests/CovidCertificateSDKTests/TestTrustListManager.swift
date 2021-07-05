@@ -15,25 +15,26 @@ import Foundation
 class TestTrustlistManager: TrustlistManagerProtocol {
     // MARK: - JWS verification
 
-    public static var jwsVerifier: JWSVerifier {
-        guard let data = Bundle.module.url(forResource: "swiss_governmentrootcaii", withExtension: "der") else {
-            fatalError("Signing CA not in Bundle")
-        }
-        guard let caPem = try? Data(contentsOf: data),
-              let verifier = JWSVerifier(rootCertificate: caPem, leafCertMustMatch: TestTrustlistManager.leafCertificateCommonName) else {
-            fatalError("Cannot create certificate from data")
-        }
-        return verifier
-    }
+    // TODO: AT - Disable JWSVerifier temporarily since we removed pinned backend certificates
+    public static var jwsVerifier: JWSVerifier? /* {
+         guard let data = Bundle.module.url(forResource: "", withExtension: "der") else {
+             fatalError("Signing CA not in Bundle")
+         }
+         guard let caPem = try? Data(contentsOf: data),
+               let verifier = JWSVerifier(rootCertificate: caPem, leafCertMustMatch: TestTrustlistManager.leafCertificateCommonName) else {
+             fatalError("Cannot create certificate from data")
+         }
+         return verifier
+     } */
 
     private static var leafCertificateCommonName: String {
         switch CovidCertificateSDK.currentEnvironment {
         case .dev:
-            return "CH01-AppContentCertificate-ref"
+            return ""
         case .abn:
-            return "CH01-AppContentCertificate-abn"
+            return ""
         case .prod:
-            return "CH01-AppContentCertificate"
+            return ""
         }
     }
 
