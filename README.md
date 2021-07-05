@@ -1,16 +1,18 @@
 # CovidCertificateSDK for iOS
 
 [![Swift Package Manager compatible](https://img.shields.io/badge/SPM-%E2%9C%93-brightgreen.svg?style=flat)](https://github.com/apple/swift-package-manager)
-[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://github.com/admin-ch/CovidCertificate-SDK-iOS/blob/main/LICENSE)
- 
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://github.com/BRZ-GmbH/CovidCertificate-SDK-iOS/blob/main/LICENSE)
+
  ## Introduction
 
-This is the Swiss implementation of the Electronic Health Certificates (EHN) Specification [[1](https://github.com/ehn-digital-green-development/hcert-spec)] used to verify the validity of Digital Covid Certificates. It is partly based on the reference implementation of EHN's `ValidationCore` [[2](https://github.com/ehn-digital-green-development/ValidationCore/tree/main/Sources/ValidationCore)]. 
- 
+This is the Swiss implementation of the Electronic Health Certificates (EHN) Specification [[1](https://github.com/ehn-digital-green-development/hcert-spec)] used to verify the validity of Digital Covid Certificates.
+
+It is based on the open source work of the Swiss [Federal Office of Information Technology, Systems and Telecommunication FOITT](https://github.com/admin-ch/CovidCertificate-SDK-iOS)
+
  ## Work in Progress
 
 The CovidCertificateSDK for iOS is work in progress and is not yet complete. We are continuing the development of this library, and the API is likely to change. Please contact the BIT before using / integrating this SDK in your app.
- 
+
 ## Installation
 
 ### Swift Package Manager
@@ -22,7 +24,7 @@ CrowdNotifierSDK is available through [Swift Package Manager](https://swift.org/
   ```swift
 
   dependencies: [
-      .package(url: "https://github.com/admin-ch/CovidCertificate-SDK-iOS.git", .branch("main"))
+      .package(url: "https://github.com/BRZ-GmbH/CovidCertificate-SDK-iOS.git", .branch("main"))
   ]
 
   ```
