@@ -5,19 +5,14 @@
 
  ## Introduction
 
-This is the Austrian implementation of the Electronic Health Certificates (EHN) Specification [[1](https://github.com/ehn-digital-green-development/hcert-spec)] used to verify the validity of Digital Covid Certificates.
-
-It is based on the open source work of the Swiss [Federal Office of Information Technology, Systems and Telecommunication FOITT](https://github.com/admin-ch/CovidCertificate-SDK-iOS)
-
- ## Work in Progress
-
-The CovidCertificateSDK for iOS is work in progress and is not yet complete. We are continuing the development of this library, and the API is likely to change. Please contact the BIT before using / integrating this SDK in your app.
+Dieses Projekt wurde veröffentlicht durch [Bundesrechenzentrum GmbH](https://www.brz.gv.at/).
+Es basiert auf auf der OpenSource-App des [Schweizer Bundesamt für Information und Telekommunikation (BIT)](https://github.com/admin-ch/CovidCertificate-App-iOS)(https://github.com/admin-ch/CovidCertificate-SDK-iOS)
 
 ## Installation
 
 ### Swift Package Manager
 
-CrowdNotifierSDK is available through [Swift Package Manager](https://swift.org/package-manager)
+CovidCertificateSDK ist verfügbar über [Swift Package Manager](https://swift.org/package-manager)
 
 1. Add the following to your `Package.swift` file:
 
@@ -69,7 +64,11 @@ public static func checkRevocationStatus(dgc: EuHealthCert, forceUpdate: Bool, _
 public static func checkNationalRules(dgc: EuHealthCert, forceUpdate: Bool, _ completionHandler: @escaping (Result<VerificationResult, NationalRulesError>) -> Void)
 ```
 
- ## References
+## Lizenz
+
+Dieses Projekt ist lizenziert unter den Bestimmungen der MPL 2 license. Siehe [LICENSE](LICENSE) für Details.
+
+## References
 [[1](https://github.com/ehn-digital-green-development/hcert-spec)] Health Certificate Specification
 
 [[2](https://github.com/ehn-digital-green-development/ValidationCore/tree/main/Sources/ValidationCore)] Validation Core
