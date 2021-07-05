@@ -12,7 +12,7 @@
 import Foundation
 
 public protocol TrustlistManagerProtocol {
-    static var jwsVerifier: JWSVerifier { get }
+    static var jwsVerifier: JWSVerifier? { get }
     var revocationListUpdater: TrustListUpdate { get }
     var trustCertificateUpdater: TrustListUpdate { get }
     var nationalRulesListUpdater: TrustListUpdate { get }
@@ -25,8 +25,10 @@ public protocol TrustlistManagerProtocol {
 class TrustlistManager: TrustlistManagerProtocol {
     // MARK: - JWS verification
 
-    public static var jwsVerifier: JWSVerifier {
-        guard let data = Bundle.module.url(forResource: "swiss_governmentrootcaii", withExtension: "der") else {
+    // TODO: AT - Disable JWSVerifier temporarily since we removed pinned backend certificates
+    public static var jwsVerifier: JWSVerifier? = nil /*{
+        // TODO AT - Change backend certificate
+        guard let data = Bundle.module.url(forResource: "", withExtension: "der") else {
             fatalError("Signing CA not in Bundle")
         }
         guard let caPem = try? Data(contentsOf: data),
@@ -34,16 +36,17 @@ class TrustlistManager: TrustlistManagerProtocol {
             fatalError("Cannot create certificate from data")
         }
         return verifier
-    }
+    }*/
 
     private static var leafCertificateCommonName: String {
+        // TODO AT - Removed backend leaf certificate name
         switch CovidCertificateSDK.currentEnvironment {
         case .dev:
-            return "CH01-AppContentCertificate-ref"
+            return ""
         case .abn:
-            return "CH01-AppContentCertificate-abn"
+            return ""
         case .prod:
-            return "CH01-AppContentCertificate"
+            return ""
         }
     }
 
@@ -133,7 +136,8 @@ public class TrustListUpdate {
     }
 
     public func addCheckOperation(forceUpdate: Bool, checkOperation: @escaping ((NetworkError?) -> Void)) {
-        let updateNeeeded = !isListStillValid() || forceUpdate
+        // TODO AT - Disabled Backend Integration
+        let updateNeeeded = false // !isListStillValid() || forceUpdate
         let updateAlreadyRunnning = updateOperation != nil
 
         if updateNeeeded, !updateAlreadyRunnning {

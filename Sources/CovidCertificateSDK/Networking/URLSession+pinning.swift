@@ -83,15 +83,15 @@ class CertificateEvaluator: NSObject, URLSessionDelegate {
 
         let bundle = Bundle.module
 
+        // TODO AT - Change Backend Root Certificate
         guard let certificate = bundle.getCertificate(with: "Amazon_Root_CA1") else {
             fatalError("Could not load certificate for pinned host")
         }
         let evaluator = UBPinnedCertificatesTrustEvaluator(certificates: [certificate])
 
         // all these hosts have a seperate certificate
-        let hosts = ["www.cc-d.bit.admin.ch",
-                     "www.cc-a.bit.admin.ch",
-                     "www.cc.bit.admin.ch"]
+        // TODO AT - Removed pinned backend hosts
+        let hosts : [String] = []
         for host in hosts {
             evaluators[host] = evaluator
         }
