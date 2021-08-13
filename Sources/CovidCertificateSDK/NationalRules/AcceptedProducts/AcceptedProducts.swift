@@ -10,6 +10,7 @@
  */
 
 import Foundation
+import ValidationCore
 
 class AcceptedProducts {
     public static var shared = AcceptedProducts()
@@ -35,7 +36,7 @@ class AcceptedProducts {
             return true
         }
         return acceptedTests.entries.contains {
-            return test.ratTestNameAndManufacturer == $0.key
+            return test.manufacturer == $0.key
         }
     }
 

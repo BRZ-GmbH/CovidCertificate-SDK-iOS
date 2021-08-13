@@ -10,6 +10,7 @@
  */
 
 import Foundation
+import ValidationCore
 
 private var instance: ChCovidCert!
 
@@ -19,7 +20,7 @@ public enum CovidCertificateSDK {
 
     public static func initialize(environment: SDKEnvironment, apiKey: String) {
         precondition(instance == nil, "CovidCertificateSDK already initialized")
-        instance = ChCovidCert(environment: environment, apiKey: apiKey, trustListManager: TrustlistManager())
+        instance = ChCovidCert(environment: environment, apiKey: apiKey)
     }
 
     public static func decode(encodedData: String) -> Result<DGCHolder, CovidCertError> {
@@ -28,24 +29,19 @@ public enum CovidCertificateSDK {
     }
 
     @available(OSX 10.13, *)
-    public static func checkSignature(cose: DGCHolder, forceUpdate: Bool, _ completionHandler: @escaping (Result<ValidationResult, ValidationError>) -> Void) {
+    public static func decodeAndCheckSignature(encodedData: String, validationClock: Date, _ completionHandler: @escaping (Result<ValidationResult, ValidationError>) -> Void) {
         instancePrecondition()
-        return instance.checkSignature(cose: cose, forceUpdate: forceUpdate, completionHandler)
+        return instance.decodeAndCheckSignature(encodedData: encodedData, validationClock: validationClock, completionHandler)
     }
 
-    public static func checkRevocationStatus(dgc: EuHealthCert, forceUpdate: Bool, _ completionHandler: @escaping (Result<ValidationResult, ValidationError>) -> Void) {
+    public static func checkNationalRules(dgc: EuHealthCert, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String = "AT", region: String? = nil, forceUpdate: Bool, _ completionHandler: @escaping (Result<VerificationResult, ValidationError>) -> Void) {
         instancePrecondition()
-        return instance.checkRevocationStatus(dgc: dgc, forceUpdate: forceUpdate, completionHandler)
+        return instance.checkNationalRules(dgc: dgc, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region, forceUpdate: forceUpdate, completionHandler)
     }
 
-    public static func checkNationalRules(dgc: EuHealthCert, forceUpdate: Bool, _ completionHandler: @escaping (Result<VerificationResult, NationalRulesError>) -> Void) {
+    public static func restartTrustListUpdate(force: Bool, completionHandler: @escaping () -> Void) {
         instancePrecondition()
-        return instance.checkNationalRules(dgc: dgc, forceUpdate: forceUpdate, completionHandler)
-    }
-
-    public static func restartTrustListUpdate(completionHandler: @escaping () -> Void, updateTimeInterval: TimeInterval) {
-        instancePrecondition()
-        instance.restartTrustListUpdate(completionHandler: completionHandler, updateTimeInterval: updateTimeInterval)
+        instance.restartTrustListUpdate(force: force, completionHandler: completionHandler)
     }
 
     private static func instancePrecondition() {

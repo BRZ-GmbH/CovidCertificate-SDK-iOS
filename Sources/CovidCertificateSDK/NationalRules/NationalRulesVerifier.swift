@@ -10,6 +10,7 @@
  */
 
 import Foundation
+import ValidationCore
 
 let PCR_TEST_VALIDITY_IN_HOURS = 72
 let RAT_TEST_VALIDITY_IN_HOURS = 24
@@ -151,7 +152,7 @@ class NationalRulesVerifier {
 
     // MARK: - Recoveery
 
-    public func verifyRecovery(recovery: PastInfection, _ completionHandler: @escaping (Result<VerificationResult, NationalRulesError>) -> Void) {
+    public func verifyRecovery(recovery: Recovery, _ completionHandler: @escaping (Result<VerificationResult, NationalRulesError>) -> Void) {
         if recovery.disease != Disease.SarsCov2.rawValue {
             completionHandler(.failure(.WRONG_DISEASE_TARGET))
             return
