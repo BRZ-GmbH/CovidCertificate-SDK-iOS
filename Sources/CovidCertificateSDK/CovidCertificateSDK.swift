@@ -39,7 +39,7 @@ public enum CovidCertificateSDK {
         return instance.checkNationalRules(dgc: dgc, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region, forceUpdate: forceUpdate, completionHandler)
     }
 
-    public static func restartTrustListUpdate(force: Bool, completionHandler: @escaping () -> Void) {
+    public static func restartTrustListUpdate(force: Bool, completionHandler: @escaping (Bool) -> Void) {
         instancePrecondition()
         instance.restartTrustListUpdate(force: force, completionHandler: completionHandler)
     }

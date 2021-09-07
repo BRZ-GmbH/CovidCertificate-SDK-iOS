@@ -160,9 +160,9 @@ public struct ChCovidCert {
         }
     }
 
-    public func restartTrustListUpdate(force: Bool, completionHandler: @escaping () -> Void) {
-        validationCore.updateTrustlistAndRules(force: force) { _ in
-            completionHandler()
+    public func restartTrustListUpdate(force: Bool, completionHandler: @escaping (Bool) -> Void) {
+        validationCore.updateTrustlistAndRules(force: force) { wasUpdated, _ in
+            completionHandler(wasUpdated)
         }
     }
 
