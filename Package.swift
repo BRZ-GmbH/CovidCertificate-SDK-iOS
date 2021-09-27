@@ -23,7 +23,7 @@ let package = Package(
         .package(name: "SwiftJWT", url: "https://github.com/Kitura/Swift-JWT.git", from: "3.6.1"),
         .package(url: "https://github.com/martinreichart/SwiftCBOR.git", .branch("master")),
         .package(url: "https://github.com/ehn-digital-green-development/base45-swift", .branch("main")),
-        .package(name: "jsonlogic", url: "https://github.com/martinreichart/json-logic-swift.git", .branch("feature/dateformatter-performance")),
+        .package(name: "jsonlogic", url: "https://github.com/eu-digital-green-certificates/json-logic-swift.git", from: "1.1.8"),
 
     ],
     targets: [
