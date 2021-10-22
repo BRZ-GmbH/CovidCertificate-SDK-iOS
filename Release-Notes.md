@@ -1,5 +1,9 @@
 # Grüner Pass (CovidCertificate-SDK-iOS) - Release Notes
 
+## v.2.1.0 (10.2021)
+
+- Optimierung App-Verhalten & Performance (EPIEMSCO-1506)
+
 ## v.2.0.3 (09.2021)
 - Fehlerbehebungen Validation Core (EPIEMSCO-1670)
 

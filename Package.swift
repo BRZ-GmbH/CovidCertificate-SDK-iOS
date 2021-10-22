@@ -21,9 +21,9 @@ let package = Package(
         .package(name: "ValidationCore", path: "validationcore-ios"),
         .package(name: "Gzip", url: "https://github.com/1024jp/GzipSwift", .upToNextMajor(from: "5.1.1")),
         .package(name: "SwiftJWT", url: "https://github.com/Kitura/Swift-JWT.git", from: "3.6.1"),
-        .package(url: "https://github.com/martinreichart/SwiftCBOR.git", .branch("master")),
+        .package(url: "https://github.com/eu-digital-green-certificates/SwiftCBOR.git", .branch("master")),
         .package(url: "https://github.com/ehn-digital-green-development/base45-swift", .branch("main")),
-        .package(name: "jsonlogic", url: "https://github.com/eu-digital-green-certificates/json-logic-swift.git", from: "1.1.8"),
+        .package(name: "jsonlogic", url: "https://github.com/BRZ-GmbH/json-logic-swift.git", .branch("feature/avoid-date-parsing-attempts")),
 
     ],
     targets: [
