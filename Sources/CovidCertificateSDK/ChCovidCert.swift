@@ -123,7 +123,7 @@ public struct ChCovidCert {
     }
 
     public func checkNationalRules(dgc: EuHealthCert, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String, region: String?, forceUpdate _: Bool, _ completionHandler: @escaping (Result<VerificationResult, ValidationError>) -> Void) {
-        validationCore.validateBusinessRules(forCertificate: dgc, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region) { result, error in
+        validationCore.validateBusinessRules(forCertificate: dgc, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region) { result, validUntilDate, error in
             if let error = error {
                 completionHandler(.failure(error))
             } else {
@@ -131,29 +131,21 @@ public struct ChCovidCert {
                 if failedRules.isEmpty {
                     switch dgc.type {
                     case .recovery:
-                        completionHandler(.success(VerificationResult(isValid: true, validUntil: dgc.recovery?.first?.validUntilDate, validFrom: dgc.recovery?.first?.validUntilDate, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
                     case .vaccination:
-                        // let maxValidity = ??
-                        // let daysAfterFirstShot = ??
-                        completionHandler(.success(VerificationResult(isValid: true, validUntil: nil, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
                     case .test:
-                        // let pcrValidity = ??
-                        // let ratValidity = ??
-                        completionHandler(.success(VerificationResult(isValid: true, validUntil: nil, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
                     }
                     return
                 } else {
                     switch dgc.type {
                     case .recovery:
-                        completionHandler(.success(VerificationResult(isValid: failedRules.isEmpty, validUntil: dgc.recovery?.first?.validUntilDate, validFrom: dgc.recovery?.first?.validUntilDate, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: failedRules.isEmpty, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
                     case .vaccination:
-                        // let maxValidity = ??
-                        // let daysAfterFirstShot = ??
-                        completionHandler(.success(VerificationResult(isValid: false, validUntil: nil, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: false, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
                     case .test:
-                        // let pcrValidity = ??
-                        // let ratValidity = ??
-                        completionHandler(.success(VerificationResult(isValid: false, validUntil: nil, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: false, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
                     }
                 }
             }
