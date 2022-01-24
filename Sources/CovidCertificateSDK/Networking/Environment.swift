@@ -123,15 +123,4 @@ public enum SDKEnvironment {
             return "https://dgc-trust.qr.gv.at/valuesetssig"
         }
     }
-
-    var apiToken: String {
-        switch self {
-        case .dev:
-            return ""
-        case .abn:
-            return ""
-        case .prod:
-            return ""
-        }
-    }
 }

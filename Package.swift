@@ -32,17 +32,11 @@ let package = Package(
         .target(
             name: "CovidCertificateSDK",
             dependencies: ["Gzip", "SwiftCBOR", "base45-swift", "SwiftJWT", "jsonlogic", "ValidationCore"],
-            exclude: ["ehn/LICENSE.txt"],
-            resources: [
-                .process("Resources"),
-            ]
+            exclude: ["ehn/LICENSE.txt"]
         ),
         .testTarget(
             name: "CovidCertificateSDKTests",
-            dependencies: ["CovidCertificateSDK", "jsonlogic"],
-            resources: [
-                .process("NationalRules"),
-            ]
+            dependencies: ["CovidCertificateSDK", "jsonlogic"]
         ),
     ]
 )

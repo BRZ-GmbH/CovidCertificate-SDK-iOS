@@ -14,6 +14,7 @@ import Foundation
 import Gzip
 import JSON
 import ValidationCore
+import class CertLogic.ValueSet
 
 public enum CovidCertError: Error, Equatable {
     case NOT_IMPLEMENTED
@@ -94,10 +95,10 @@ public struct ChCovidCert {
                                         valueSetsUrl: environment.valueSetsUrl,
                                         valueSetsSignatureUrl: environment.valueSetsSignatureUrl,
                                         valueSetsTrustAnchor: environment.trustlistAnchor,
-                                        apiToken: environment.apiToken)
+                                        apiToken: apiKey)
     }
 
-    public func decode(encodedData: String) -> Result<DGCHolder, CovidCertError> {
+    public func decode(encodedData: String) -> Swift.Result<DGCHolder, CovidCertError> {
         #if DEBUG
             print(encodedData)
         #endif
@@ -112,7 +113,7 @@ public struct ChCovidCert {
         }
     }
 
-    public func decodeAndCheckSignature(encodedData: String, validationClock: Date, _ completionHandler: @escaping (Result<ValidationResult, ValidationError>) -> Void) {
+    public func decodeAndCheckSignature(encodedData: String, validationClock: Date, _ completionHandler: @escaping (Swift.Result<ValidationResult, ValidationError>) -> Void) {
         validationCore.validate(encodedData: encodedData, validationClock: validationClock) { result in
             if result.isValid {
                 completionHandler(.success(result))
@@ -122,7 +123,7 @@ public struct ChCovidCert {
         }
     }
 
-    public func checkNationalRules(dgc: EuHealthCert, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String, region: String?, forceUpdate _: Bool, _ completionHandler: @escaping (Result<VerificationResult, ValidationError>) -> Void) {
+    public func checkNationalRules(dgc: EuHealthCert, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String, region: String?, forceUpdate _: Bool, _ completionHandler: @escaping (Swift.Result<VerificationResult, ValidationError>) -> Void) {
         validationCore.validateBusinessRules(forCertificate: dgc, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region) { result, validUntilDate, error in
             if let error = error {
                 completionHandler(.failure(error))
@@ -131,34 +132,40 @@ public struct ChCovidCert {
                 if failedRules.isEmpty {
                     switch dgc.type {
                     case .recovery:
-                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil)))
                     case .vaccination:
-                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil)))
                     case .test:
-                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil)))
                     }
                     return
                 } else {
                     switch dgc.type {
                     case .recovery:
-                        completionHandler(.success(VerificationResult(isValid: failedRules.isEmpty, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: failedRules.isEmpty, validUntil: validUntilDate, validFrom: nil)))
                     case .vaccination:
-                        completionHandler(.success(VerificationResult(isValid: false, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: false, validUntil: validUntilDate, validFrom: nil)))
                     case .test:
-                        completionHandler(.success(VerificationResult(isValid: false, validUntil: validUntilDate, validFrom: nil, dateError: nil)))
+                        completionHandler(.success(VerificationResult(isValid: false, validUntil: validUntilDate, validFrom: nil)))
                     }
                 }
             }
         }
     }
 
-    public func restartTrustListUpdate(force: Bool, completionHandler: @escaping (Bool) -> Void) {
-        validationCore.updateTrustlistAndRules(force: force) { wasUpdated, _ in
-            completionHandler(wasUpdated)
+    public func restartTrustListUpdate(force: Bool, completionHandler: @escaping (Bool, Bool) -> Void) {
+        validationCore.updateTrustlistAndRules(force: force) { wasUpdated, error in
+            DispatchQueue.main.async {
+                completionHandler(wasUpdated, error != nil)
+            }            
         }
     }
 
     func allRecoveriesAreValid(recoveries _: [Recovery]) -> Bool {
         return false
+    }
+    
+    func currentValueSets() -> [String:ValueSet] {
+        return validationCore.getCurrentValueSets()
     }
 }

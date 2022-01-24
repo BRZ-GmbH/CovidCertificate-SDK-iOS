@@ -11,6 +11,7 @@
 
 import Foundation
 import ValidationCore
+import class CertLogic.ValueSet
 
 private var instance: ChCovidCert!
 
@@ -39,7 +40,7 @@ public enum CovidCertificateSDK {
         return instance.checkNationalRules(dgc: dgc, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region, forceUpdate: forceUpdate, completionHandler)
     }
 
-    public static func restartTrustListUpdate(force: Bool, completionHandler: @escaping (Bool) -> Void) {
+    public static func restartTrustListUpdate(force: Bool, completionHandler: @escaping (Bool, Bool) -> Void) {
         instancePrecondition()
         instance.restartTrustListUpdate(force: force, completionHandler: completionHandler)
     }
@@ -56,5 +57,9 @@ public enum CovidCertificateSDK {
     public static var apiKey: String {
         instancePrecondition()
         return instance.apiKey
+    }
+    
+    public static func currentValueSets() -> [String:ValueSet] {
+        return instance.currentValueSets()
     }
 }
