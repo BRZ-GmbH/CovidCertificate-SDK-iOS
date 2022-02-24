@@ -123,8 +123,8 @@ public struct ChCovidCert {
         }
     }
 
-    public func checkNationalRules(dgc: EuHealthCert, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String, region: String?, forceUpdate _: Bool, _ completionHandler: @escaping (Swift.Result<VerificationResult, ValidationError>) -> Void) {
-        validationCore.validateBusinessRules(forCertificate: dgc, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region) { result, validUntilDate, error in
+    public func checkNationalRules(dgc: EuHealthCert, realTime: Date, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String, region: String?, forceUpdate _: Bool, _ completionHandler: @escaping (Swift.Result<VerificationResult, ValidationError>) -> Void) {
+        validationCore.validateBusinessRules(forCertificate: dgc, realTime: realTime, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region) { result, validUntilDate, error in
             if let error = error {
                 completionHandler(.failure(error))
             } else {

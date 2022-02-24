@@ -35,9 +35,9 @@ public enum CovidCertificateSDK {
         return instance.decodeAndCheckSignature(encodedData: encodedData, validationClock: validationClock, completionHandler)
     }
 
-    public static func checkNationalRules(dgc: EuHealthCert, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String = "AT", region: String? = nil, forceUpdate: Bool, _ completionHandler: @escaping (Result<VerificationResult, ValidationError>) -> Void) {
+    public static func checkNationalRules(dgc: EuHealthCert, realTime: Date, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String = "AT", region: String? = nil, forceUpdate: Bool, _ completionHandler: @escaping (Result<VerificationResult, ValidationError>) -> Void) {
         instancePrecondition()
-        return instance.checkNationalRules(dgc: dgc, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region, forceUpdate: forceUpdate, completionHandler)
+        return instance.checkNationalRules(dgc: dgc, realTime: realTime, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region, forceUpdate: forceUpdate, completionHandler)
     }
 
     public static func restartTrustListUpdate(force: Bool, completionHandler: @escaping (Bool, Bool) -> Void) {
