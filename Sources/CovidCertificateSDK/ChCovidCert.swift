@@ -43,8 +43,8 @@ public enum CovidCertError: Error, Equatable {
 }
 
 public struct DGCHolder {
-    public var healthCert: EuHealthCert {
-        return cwt.euHealthCert!
+    public var healthCert: HealthCert {
+        return cwt.healthCert!
     }
 
     public var issuedAt: Date? {
@@ -82,20 +82,52 @@ public struct ChCovidCert {
 
     public let environment: SDKEnvironment
     public let apiKey: String
+    
+    private let trustlistService: TrustlistService
+    private let nationalTrustlistService: TrustlistService
+    private let businessRulesService: BusinessRulesService
+    private let valueSetsService: ValueSetsService
 
     init(environment: SDKEnvironment, apiKey: String) {
         self.environment = environment
         self.apiKey = apiKey
-        validationCore = ValidationCore(trustlistUrl: environment.trustlistUrl,
-                                        signatureUrl: environment.trustlistSignatureUrl,
-                                        trustAnchor: environment.trustlistAnchor,
-                                        businessRulesUrl: environment.businessRulesUrl,
-                                        businessRulesSignatureUrl: environment.businessRulesSignatureUrl,
-                                        businessRulesTrustAnchor: environment.trustlistAnchor,
-                                        valueSetsUrl: environment.valueSetsUrl,
-                                        valueSetsSignatureUrl: environment.valueSetsSignatureUrl,
-                                        valueSetsTrustAnchor: environment.trustlistAnchor,
-                                        apiToken: apiKey)
+        
+        let dateService = DefaultDateService()
+        trustlistService = DefaultTrustlistService(
+            dateService: dateService,
+            trustlistUrl: environment.trustlistUrl,
+            signatureUrl: environment.trustlistSignatureUrl,
+            trustAnchor: environment.trustlistAnchor,
+            source: .euDgc,
+            apiToken: apiKey)
+        
+        nationalTrustlistService = DefaultTrustlistService(
+            dateService: dateService,
+            trustlistUrl: environment.nationalTrustlistUrl,
+            signatureUrl: environment.nationalTrustlistSignatureUrl,
+            trustAnchor: environment.trustlistAnchor,
+            source: .atNational,
+            apiToken: apiKey)
+        
+        businessRulesService = DefaultBusinessRulesService(
+            dateService: dateService,
+            businessRulesUrl: environment.businessRulesUrl,
+            signatureUrl: environment.businessRulesSignatureUrl,
+            trustAnchor: environment.trustlistAnchor,
+            apiToken: apiKey)
+        
+        valueSetsService = DefaultValueSetsService(
+            dateService: dateService,
+            valueSetsUrl: environment.valueSetsUrl,
+            signatureUrl: environment.valueSetsSignatureUrl,
+            trustAnchor: environment.trustlistAnchor,
+            apiToken: apiKey)
+        
+        validationCore = ValidationCore(trustlistService: trustlistService,
+                                        nationalTrustlistService: nationalTrustlistService,
+                                        businessRulesService: businessRulesService,
+                                        valueSetsService: valueSetsService,
+                                        dateService: dateService)
     }
 
     public func decode(encodedData: String) -> Swift.Result<DGCHolder, CovidCertError> {
@@ -114,16 +146,29 @@ public struct ChCovidCert {
     }
 
     public func decodeAndCheckSignature(encodedData: String, validationClock: Date, _ completionHandler: @escaping (Swift.Result<ValidationResult, ValidationError>) -> Void) {
-        validationCore.validate(encodedData: encodedData, validationClock: validationClock) { result in
+        trustlistService.updateDateService(ValidationClockDateService.forDate(validationClock))
+        nationalTrustlistService.updateDateService(ValidationClockDateService.forDate(validationClock))
+        
+        validationCore.validate(encodedData: encodedData) { result in
             if result.isValid {
                 completionHandler(.success(result))
             } else {
-                completionHandler(.failure(result.error ?? .GENERAL_ERROR))
+                if result.error == ValidationError.INVALID_SCHEME_PREFIX {
+                    validationCore.validateExemption(encodedData: encodedData) { exemptionResult in
+                        if exemptionResult.isValid {
+                            completionHandler(.success(exemptionResult))
+                        } else {
+                            completionHandler(.failure(exemptionResult.error ?? .GENERAL_ERROR))
+                        }
+                    }
+                } else {
+                    completionHandler(.failure(result.error ?? .GENERAL_ERROR))
+                }
             }
         }
     }
 
-    public func checkNationalRules(dgc: EuHealthCert, realTime: Date, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String, region: String?, forceUpdate _: Bool, _ completionHandler: @escaping (Swift.Result<VerificationResult, ValidationError>) -> Void) {
+    public func checkNationalRules(dgc: HealthCert, realTime: Date, validationClock: Date, issuedAt: Date, expiresAt: Date, countryCode: String, region: String?, forceUpdate _: Bool, _ completionHandler: @escaping (Swift.Result<VerificationResult, ValidationError>) -> Void) {
         validationCore.validateBusinessRules(forCertificate: dgc, realTime: realTime, validationClock: validationClock, issuedAt: issuedAt, expiresAt: expiresAt, countryCode: countryCode, region: region) { result, validUntilDate, error in
             if let error = error {
                 completionHandler(.failure(error))
@@ -137,6 +182,8 @@ public struct ChCovidCert {
                         completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil)))
                     case .test:
                         completionHandler(.success(VerificationResult(isValid: true, validUntil: validUntilDate, validFrom: nil)))
+                    case .vaccinationExemption:
+                        completionHandler(.success(VerificationResult(isValid: true, validUntil: nil, validFrom: nil)))
                     }
                     return
                 } else {
@@ -147,6 +194,8 @@ public struct ChCovidCert {
                         completionHandler(.success(VerificationResult(isValid: false, validUntil: validUntilDate, validFrom: nil)))
                     case .test:
                         completionHandler(.success(VerificationResult(isValid: false, validUntil: validUntilDate, validFrom: nil)))
+                    case .vaccinationExemption:
+                        completionHandler(.success(VerificationResult(isValid: true, validUntil: nil, validFrom: nil)))
                     }
                 }
             }

@@ -37,6 +37,28 @@ public enum SDKEnvironment {
             return "https://dgc-trust.qr.gv.at/trustlistsig"
         }
     }
+    
+    var nationalTrustlistUrl: String {
+        switch self {
+        case .dev:
+            return "https://dgc.a-sit.at/ehn/cert/listv2"
+        case .abn:
+            return "https://dgc-trusttest.qr.gv.at/at-trustlist"
+        case .prod:
+            return "https://dgc-trust.qr.gv.at/at-trustlist"
+        }
+    }
+
+    var nationalTrustlistSignatureUrl: String {
+        switch self {
+        case .dev:
+            return "https://dgc.a-sit.at/ehn/cert/sigv2"
+        case .abn:
+            return "https://dgc-trusttest.qr.gv.at/at-trustlistsig"
+        case .prod:
+            return "https://dgc-trust.qr.gv.at/at-trustlistsig"
+        }
+    }
 
     var trustlistAnchor: String {
         switch self {

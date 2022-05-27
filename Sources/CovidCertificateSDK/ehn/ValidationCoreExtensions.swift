@@ -18,7 +18,7 @@ extension Optional where Wrapped: Collection {
     }
 }
 
-extension EuHealthCert {
+extension HealthCert {
     func certIdentifiers() -> [String] {
         switch type {
         case .vaccination:
@@ -32,6 +32,10 @@ extension EuHealthCert {
         case .test:
             return tests!.map { test in
                 test.certificateIdentifier
+            }
+        case .vaccinationExemption:
+            return vaccinationExemption!.map { vaccinationExemption in
+                vaccinationExemption.certificateIdentifier
             }
         }
     }
@@ -140,4 +144,24 @@ public extension Recovery {
     var isTargetDiseaseCorrect: Bool {
         return disease == Disease.SarsCov2.rawValue
     }
+}
+
+public extension VaccinationExemption {
+    var isTargetDiseaseCorrect: Bool {
+        return disease == Disease.SarsCov2.rawValue
+    }
+    
+    /// we need a date of vaccination which needs to be in the format of yyyy-MM-dd
+    internal var dateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = DATE_FORMAT
+        return dateFormatter
+    }
+    
+    var validUntilDate: Date? {
+        guard let date = dateFormatter.date(from: validUntil) else { return nil }
+        
+        return Calendar.autoupdatingCurrent.date(byAdding: DateComponents(day: 1, second: -1), to: Calendar.autoupdatingCurrent.startOfDay(for: date))!
+    }
+    
 }
